@@ -1,14 +1,14 @@
 'use client';
 import { useEffect, useState } from 'react';
-import type { Order } from '../types/order';
-import type { Customer } from '../types/customer';
+import type { OrderDTO } from '../types/order';
+import type { CustomerDTO } from '../types/customer';
 import type { Food } from '../types/food';
 import { customerService } from '../services/customerService';
 import { foodService } from '../services/foodService';
 
 
-export default function OrderForm({ onSubmit, onCancel }:{ onSubmit:(o:Order)=>void; onCancel:()=>void }){
-const [customers, setCustomers] = useState<Customer[]>([]);
+export default function OrderForm({ onSubmit, onCancel }:{ onSubmit:(o:OrderDTO)=>void; onCancel:()=>void }){
+const [customers, setCustomers] = useState<CustomerDTO[]>([]);
 const [foods, setFoods] = useState<Food[]>([]);
 const [customerId, setCustomerId] = useState<number|undefined>();
 const [items, setItems] = useState<{ foodId?: number; quantity: number }[]>([{ quantity: 1 }]);
@@ -52,7 +52,7 @@ return (
 
 
 <div className="mt-3 flex gap-2">
-<button onClick={()=> onSubmit({ customerId, orderItems: items.map(i=>({ foodId: i.foodId!, quantity: i.quantity })) } as Order)} className="rounded-md bg-gray-900 px-3 py-1.5 text-white">Tạo đơn</button>
+<button onClick={()=> onSubmit({ customerId, orderItems: items.map(i=>({ foodId: i.foodId!, quantity: i.quantity })) } as OrderDTO)} className="rounded-md bg-gray-900 px-3 py-1.5 text-white">Tạo đơn</button>
 <button onClick={onCancel} className="rounded-md border px-3 py-1.5">Hủy</button>
 </div>
 </div>

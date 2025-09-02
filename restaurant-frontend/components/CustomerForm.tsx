@@ -1,10 +1,10 @@
 'use client';
 import { useState } from 'react';
-import type { Customer } from '../types/customer';
+import type { CustomerDTO } from '../types/customer';
 
 
-export default function CustomerForm({ initial, onSubmit, onCancel }:{ initial?: Partial<Customer>; onSubmit:(c:Customer)=>void; onCancel:()=>void }){
-const [form, setForm] = useState<Customer>({
+export default function CustomerForm({ initial, onSubmit, onCancel }:{ initial?: Partial<CustomerDTO>; onSubmit:(c:CustomerDTO)=>void; onCancel:()=>void }){
+const [form, setForm] = useState<CustomerDTO>({
 id: initial?.id,
 name: initial?.name || '',
 gender: initial?.gender || 'Other',
