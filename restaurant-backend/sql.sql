@@ -1,0 +1,13 @@
+drop database restaurant;
+CREATE DATABASE restaurant;
+USE restaurant;
+CREATE USER 'restaurant_user'@'localhost' IDENTIFIED BY '123456';
+GRANT ALL PRIVILEGES ON restaurant.* TO 'restaurant_user'@'localhost';
+FLUSH PRIVILEGES;
+SHOW DATABASES;
+SELECT user, host FROM mysql.user;
+DROP USER 'restaurant_user'@'localhost';
+DESC food;
+INSERT INTO food (name, price) VALUES ('Phở bò', 50000);
+INSERT INTO food (name, price) VALUES ('Cơm gà', 45000);
+SELECT * FROM food;
