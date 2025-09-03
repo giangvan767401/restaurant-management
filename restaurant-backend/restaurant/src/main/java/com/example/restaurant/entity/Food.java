@@ -20,6 +20,7 @@ public class Food {
 
     private Boolean available;   // còn bán hay hết hàng
 
+    @Column(name = "image_url", length = 1000) // Tăng giới hạn lên 1000
     private String imageUrl;     // link ảnh
 
     // Getter & Setter
@@ -39,11 +40,11 @@ public class Food {
         this.name = name;
     }
 
-    public Double getPrice() {   // ✅ đổi sang Double
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {   // ✅ đổi sang Double
+    public void setPrice(Double price) {
         this.price = price;
     }
 

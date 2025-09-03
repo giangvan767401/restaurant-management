@@ -18,12 +18,14 @@ export default function Customers() {
   const router = useRouter();
 
   const load = async () => {
+    console.log('Role:', role, 'Can manage:', canManage); // Debug
     setLoading(true);
     try {
       const data = await customerService.list();
+      console.log('Customers data:', data); // Debug
       setList(data);
     } catch (e) {
-      // ignore
+      console.error('Load customers error:', e);
     } finally {
       setLoading(false);
     }
@@ -34,7 +36,9 @@ export default function Customers() {
   const onSave = async (c: CustomerDTO) => {
     if (c.id) await customerService.update(c.id, c);
     else await customerService.create(c);
-    setEditing(undefined); await load(); alert('Lưu khách hàng thành công');
+    setEditing(undefined);
+    await load();
+    alert('Lưu khách hàng thành công');
   };
 
   const onDelete = async (id: number) => {
@@ -45,9 +49,16 @@ export default function Customers() {
     }
   };
 
-  // guard: redirect non-QUANLI users (if you want)
   if (!canManage) {
-    // you can show read-only list for other roles; here we show but hide action buttons
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <main className="mx-auto max-w-6xl p-6">
+          <div className="rounded-2xl border bg-white p-6 shadow-sm">Bạn không có quyền xem danh sách khách hàng.</div>
+        </main>
+        <Footer />
+      </div>
+    );
   }
 
   return (

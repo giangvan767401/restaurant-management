@@ -1,7 +1,10 @@
-package com.example.restaurant.dto;
+ package com.example.restaurant.dto;
 
 import com.example.restaurant.entity.Order;
+import com.example.restaurant.entity.OrderItem;
+
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,7 +20,7 @@ public class OrderDTO {
     private String customerLevel;
 
     // items
-    private List<OrderItemDTO> items;
+    private List<Long> itemIds;
 
     public OrderDTO(Order order) {
         this.id = order.getId();
@@ -32,9 +35,11 @@ public class OrderDTO {
         }
 
         if (order.getOrderItems() != null) {
-            this.items = order.getOrderItems().stream()
-                    .map(OrderItemDTO::new)
+            this.itemIds = order.getOrderItems().stream()
+                    .map(OrderItem::getId)
                     .collect(Collectors.toList());
+        } else {
+            this.itemIds = new ArrayList<>();
         }
     }
 
@@ -46,5 +51,15 @@ public class OrderDTO {
     public Long getCustomerId() { return customerId; }
     public String getCustomerName() { return customerName; }
     public String getCustomerLevel() { return customerLevel; }
-    public List<OrderItemDTO> getItems() { return items; }
+    public List<Long> getItemIds() { return itemIds; }
+
+    // Setters
+    public void setId(Long id) { this.id = id; }
+    public void setOrderTime(LocalDateTime orderTime) { this.orderTime = orderTime; }
+    public void setStatus(String status) { this.status = status; }
+    public void setTotalAmount(Double totalAmount) { this.totalAmount = totalAmount; }
+    public void setCustomerId(Long customerId) { this.customerId = customerId; }
+    public void setCustomerName(String customerName) { this.customerName = customerName; }
+    public void setCustomerLevel(String customerLevel) { this.customerLevel = customerLevel; }
+    public void setItemIds(List<Long> itemIds) { this.itemIds = itemIds; }
 }

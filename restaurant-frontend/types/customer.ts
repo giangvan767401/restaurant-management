@@ -1,5 +1,3 @@
-import type { ProductDTO } from './product';
-
 export interface CustomerDTO {
   id?: number;
   name: string;
@@ -9,5 +7,4 @@ export interface CustomerDTO {
   email?: string;
   address?: string;
   level?: string;
-  selectedFoods?: ProductDTO[];
 }

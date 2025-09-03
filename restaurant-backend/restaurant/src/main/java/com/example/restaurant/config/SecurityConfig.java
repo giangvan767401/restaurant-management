@@ -65,10 +65,7 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())   // bật CORS
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()   // register, login
-                        .requestMatchers("/foods/**").permitAll()  // public xem món ăn
-                        .requestMatchers("/customers/**").permitAll()   // cho phép truy cập
-                        .requestMatchers("/orders/**").permitAll()
+                        .requestMatchers("/auth/**", "/foods/**", "/customers/**", "/orders/**", "/payments/**").permitAll()
                         .requestMatchers("/dau-bep/**").hasRole("DAUBEP")
                         .requestMatchers("/phuc-vu/**").hasRole("PHUCVU")
                         .requestMatchers("/quan-li/**").hasRole("QUANLI")

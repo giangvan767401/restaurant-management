@@ -1,5 +1,6 @@
 package com.example.restaurant.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,10 +19,11 @@ public class Customer extends Human {
             joinColumns = @JoinColumn(name = "customer_id"),
             inverseJoinColumns = @JoinColumn(name = "food_id")
     )
+    @JsonIgnore // Ngăn JSON recursion
     private List<Food> selectedFoods = new ArrayList<>();
 
-    // ✅ Thêm quan hệ 1-n với Order
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore // Ngăn JSON recursion
     private List<Order> orders = new ArrayList<>();
 
     public Customer() {}

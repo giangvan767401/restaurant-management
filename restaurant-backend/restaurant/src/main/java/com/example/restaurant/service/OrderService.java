@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -58,14 +59,14 @@ public class OrderService {
     }
 
     public List<OrderDTO> getAllOrders() {
-        return orderRepository.findAll()
+        return orderRepository.findAllWithItems()
                 .stream()
                 .map(OrderDTO::new)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     public OrderDTO getOrder(Long id) {
-        Order order = orderRepository.findById(id)
+        Order order = orderRepository.findByIdWithItems(id)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
         return new OrderDTO(order);
     }

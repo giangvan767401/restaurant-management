@@ -6,7 +6,7 @@ import Spinner from '../components/Spinner';
 import OrderForm from '../components/OrderForm';
 import { orderService } from '../services/orderService';
 import { paymentService } from '../services/paymentService';
-import type { OrderDTO } from '../types/order';
+import type { OrderDTO, OrderItemDTO } from '../types/order';
 import type { PaymentDTO } from '../types/payment';
 import { getRole, getUsername } from '../utils/auth';
 
@@ -16,6 +16,7 @@ export default function Orders() {
   const [orders, setOrders] = useState<OrderDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
+  const [itemsCache, setItemsCache] = useState<{ [key: number]: OrderItemDTO }>({});
 
   const canCreate = ['PHUCVU', 'QUANLI'].includes(role);
   const canDelete = ['QUANLI'].includes(role);
@@ -23,7 +24,25 @@ export default function Orders() {
   const load = async () => {
     setLoading(true);
     try {
-      setOrders(await orderService.list());
+      const orders = await orderService.list();
+      setOrders(orders);
+      // Load OrderItemDTO cho tất cả itemIds
+      for (const order of orders) {
+        if (order.itemIds) {
+          for (const itemId of order.itemIds) {
+            if (!itemsCache[itemId]) {
+              try {
+                const item = await orderService.getItem(itemId);
+                setItemsCache(prev => ({ ...prev, [itemId]: item }));
+              } catch (e) {
+                console.error(`Error loading item ${itemId}:`, e);
+              }
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.error('Load orders error:', e);
     } finally {
       setLoading(false);
     }
@@ -42,8 +61,7 @@ export default function Orders() {
     [orders, role, username]
   );
 
-  // sửa any => Omit<OrderDTO, 'id' | 'items'>
-  const createOrder = async (payload: Omit<OrderDTO, 'id' | 'items'>) => {
+  const createOrder = async (payload: Omit<OrderDTO, 'id' | 'itemIds'>) => {
     await orderService.create(payload);
     setCreating(false);
     await load();
@@ -59,12 +77,7 @@ export default function Orders() {
   };
 
   const pay = async (orderId: number) => {
-    // Nếu backend nhận orderId trực tiếp
     const p: PaymentDTO = { method: 'CASH', orderId: orderId };
-
-    // Nếu backend nhận nested object { order: { id } }, đổi lại như sau:
-    // const p: PaymentDTO = { method: 'CASH', order: { id: orderId } };
-
     await paymentService.create(p);
     await load();
     alert('Đã tạo thanh toán');
@@ -125,9 +138,11 @@ export default function Orders() {
                     <td className="p-3">{o.totalAmount || 0}</td>
                     <td className="p-3">
                       <ul className="list-disc pl-4">
-                        {o.items?.map((it) => (
-                          <li key={it.id}>
-                            {it.foodName} x {it.quantity}
+                        {o.itemIds?.map((id) => (
+                          <li key={id}>
+                            {itemsCache[id]?.foodName
+                              ? `${itemsCache[id].foodName} x ${itemsCache[id].quantity}`
+                              : 'Loading...'}
                           </li>
                         ))}
                       </ul>

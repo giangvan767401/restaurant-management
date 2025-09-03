@@ -17,24 +17,21 @@ export default function Dashboard() {
   const [revenue, setRevenue] = useState(0);
 
   useEffect(() => {
+    console.log('Role:', role, 'Can view:', canView); // Debug
     if (!canView) return;
-    (async () => {
-      setLoading(true);
-      try {
-        const [customers, orders, payments] = await Promise.all([
-          customerService.list(),
-          orderService.list(),
-          paymentService.list(),
-        ]);
+    setLoading(true);
+    Promise.all([
+      customerService.list().catch(e => { console.error('Customers error:', e); return []; }),
+      orderService.list().catch(e => { console.error('Orders error:', e); return []; }),
+      paymentService.list().catch(e => { console.error('Payments error:', e); return []; }),
+    ])
+      .then(([customers, orders, payments]) => {
         setTotalCustomers(customers.length);
         setTotalOrders(orders.length);
         setRevenue(payments.reduce((s, p) => s + (p.amount || 0), 0));
-      } catch (e) {
-        // ignore
-      } finally {
-        setLoading(false);
-      }
-    })();
+      })
+      .catch(e => console.error('Dashboard fetch error:', e))
+      .finally(() => setLoading(false));
   }, [canView]);
 
   if (!canView) {
