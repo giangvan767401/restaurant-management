@@ -1,4 +1,4 @@
- package com.example.restaurant.dto;
+package com.example.restaurant.dto;
 
 import com.example.restaurant.entity.Order;
 import com.example.restaurant.entity.OrderItem;
@@ -13,20 +13,26 @@ public class OrderDTO {
     private LocalDateTime orderTime;
     private String status;
     private Double totalAmount;
-
-    // customer info
     private Long customerId;
     private String customerName;
     private String customerLevel;
-
-    // items
     private List<Long> itemIds;
+    private List<OrderItemDTO> orderItems;
 
+    // Constructor mặc định
+    public OrderDTO() {
+        this.orderItems = new ArrayList<>();
+        this.itemIds = new ArrayList<>();
+    }
+
+    // Constructor từ Order
     public OrderDTO(Order order) {
         this.id = order.getId();
         this.orderTime = order.getOrderTime();
         this.status = order.getStatus();
         this.totalAmount = order.getTotalAmount();
+        this.orderItems = new ArrayList<>();
+        this.itemIds = new ArrayList<>();
 
         if (order.getCustomer() != null) {
             this.customerId = order.getCustomer().getId();
@@ -38,8 +44,9 @@ public class OrderDTO {
             this.itemIds = order.getOrderItems().stream()
                     .map(OrderItem::getId)
                     .collect(Collectors.toList());
-        } else {
-            this.itemIds = new ArrayList<>();
+            this.orderItems = order.getOrderItems().stream()
+                    .map(OrderItemDTO::new)
+                    .collect(Collectors.toList());
         }
     }
 
@@ -52,6 +59,7 @@ public class OrderDTO {
     public String getCustomerName() { return customerName; }
     public String getCustomerLevel() { return customerLevel; }
     public List<Long> getItemIds() { return itemIds; }
+    public List<OrderItemDTO> getOrderItems() { return orderItems; }
 
     // Setters
     public void setId(Long id) { this.id = id; }
@@ -62,4 +70,11 @@ public class OrderDTO {
     public void setCustomerName(String customerName) { this.customerName = customerName; }
     public void setCustomerLevel(String customerLevel) { this.customerLevel = customerLevel; }
     public void setItemIds(List<Long> itemIds) { this.itemIds = itemIds; }
+    public void setOrderItems(List<OrderItemDTO> orderItems) { this.orderItems = orderItems; }
+
+    @Override
+    public String toString() {
+        return "OrderDTO{id=" + id + ", customerId=" + customerId + ", customerName='" + customerName + "', status='" + status +
+                "', orderTime=" + orderTime + ", totalAmount=" + totalAmount + ", orderItems=" + orderItems + ", itemIds=" + itemIds + "}";
+    }
 }

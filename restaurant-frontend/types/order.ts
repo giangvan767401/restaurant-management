@@ -15,5 +15,5 @@ export interface OrderDTO {
   customerId?: number;
   customerName?: string;
   customerLevel?: string;
-  items?: OrderItemDTO[];
+  itemIds?: number[]; // Thay items bằng itemIds
 }

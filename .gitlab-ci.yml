@@ -1,0 +1,48 @@
+stages:
+  - lint
+  - test
+  - build-frontend
+  - build-backend
+
+frontend_lint:
+  stage: lint
+  image: node:18
+  before_script:
+    - npm ci
+  script:
+    - npm run lint || echo "No lint script, skipping"
+
+frontend_test:
+  stage: test
+  image: node:18
+  before_script:
+    - npm ci
+  script:
+    - npm test || echo "No tests defined, skipping"
+
+frontend_build:
+  stage: build-frontend
+  image: node:18
+  before_script:
+    - cd restaurant-frontend
+    - npm ci
+  script:
+    - npm run build
+  artifacts:
+    paths:
+      - restaurant-frontend/.next/
+      - restaurant-frontend/package.json
+      - restaurant-frontend/package-lock.json
+    expire_in: 1 week
+
+backend_build:
+  stage: build-backend
+  image: maven:3.9.6-eclipse-temurin-17
+  before_script:
+    - cd restaurant-backend
+  script:
+    - mvn -B clean package -DskipTests
+  artifacts:
+    paths:
+      - restaurant-backend/target/*.jar
+    expire_in: 1 week

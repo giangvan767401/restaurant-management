@@ -21,7 +21,8 @@ export default function ProductForm({ initial, onSubmit, onCancel }: { initial?:
         try {
             onSubmit(form);
             alert('Lưu món ăn thành công!');
-        } catch (e: Error) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (e: any) {
             console.error('Error saving product:', e);
             alert('Lỗi khi lưu món ăn: ' + (e.message || 'Vui lòng thử lại'));
         }

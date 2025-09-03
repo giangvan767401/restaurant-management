@@ -4,16 +4,15 @@ import com.example.restaurant.entity.OrderItem;
 
 public class OrderItemDTO {
     private Long id;
-    private int quantity;
-
-    // Thông tin order
+    private Integer quantity;
     private Long orderId;
     private String orderStatus;
-
-    // Thông tin food
     private Long foodId;
     private String foodName;
     private Double foodPrice;
+
+    public OrderItemDTO() {
+    }
 
     public OrderItemDTO(OrderItem item) {
         this.id = item.getId();
@@ -33,7 +32,7 @@ public class OrderItemDTO {
 
     // Getters
     public Long getId() { return id; }
-    public int getQuantity() { return quantity; }
+    public Integer getQuantity() { return quantity; }
     public Long getOrderId() { return orderId; }
     public String getOrderStatus() { return orderStatus; }
     public Long getFoodId() { return foodId; }
@@ -42,10 +41,16 @@ public class OrderItemDTO {
 
     // Setters
     public void setId(Long id) { this.id = id; }
-    public void setQuantity(int quantity) { this.quantity = quantity; }
+    public void setQuantity(Integer quantity) { this.quantity = quantity; }
     public void setOrderId(Long orderId) { this.orderId = orderId; }
     public void setOrderStatus(String orderStatus) { this.orderStatus = orderStatus; }
     public void setFoodId(Long foodId) { this.foodId = foodId; }
     public void setFoodName(String foodName) { this.foodName = foodName; }
     public void setFoodPrice(Double foodPrice) { this.foodPrice = foodPrice; }
+
+    @Override
+    public String toString() {
+        return "OrderItemDTO{id=" + id + ", foodId=" + foodId + ", foodName='" + foodName + "', foodPrice=" + foodPrice +
+                ", quantity=" + quantity + ", orderId=" + orderId + ", orderStatus='" + orderStatus + "'}";
+    }
 }
