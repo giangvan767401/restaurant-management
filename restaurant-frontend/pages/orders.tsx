@@ -25,34 +25,36 @@ export default function Orders() {
     setLoading(true);
     try {
       const orders = await orderService.list();
+      console.log('Orders data:', orders); // Debug
       setOrders(orders);
-      // Load OrderItemDTO cho tất cả itemIds
       for (const order of orders) {
         if (order.itemIds) {
           for (const itemId of order.itemIds) {
             if (!itemsCache[itemId]) {
               try {
+                console.log(`Fetching item ${itemId}`); // Debug
                 const item = await orderService.getItem(itemId);
                 setItemsCache(prev => ({ ...prev, [itemId]: item }));
               } catch (e) {
-                console.error(`Error loading item ${itemId}:`, e);
+                console.error(`Error loading item ${itemId}:`, e); // Debug
               }
             }
           }
         }
       }
+      console.log('Items cache:', itemsCache); // Debug
     } catch (e) {
-      console.error('Load orders error:', e);
+      console.error('Load orders error:', e); // Debug
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
+    console.log('Role:', role, 'Username:', username); // Debug
     load();
   }, []);
 
-  // Nếu là CUSTOMER thì chỉ thấy đơn của mình
   const visibleOrders = useMemo(
     () =>
       role === 'CUSTOMER'
@@ -62,25 +64,40 @@ export default function Orders() {
   );
 
   const createOrder = async (payload: Omit<OrderDTO, 'id' | 'itemIds'>) => {
-    await orderService.create(payload);
-    setCreating(false);
-    await load();
-    alert('Tạo đơn thành công');
+    try {
+      await orderService.create(payload);
+      setCreating(false);
+      await load();
+      alert('Tạo đơn thành công');
+    } catch (e) {
+      console.error('Create order error:', e); // Debug
+      alert('Lỗi khi tạo đơn hàng');
+    }
   };
 
   const deleteOrder = async (id: number) => {
     if (confirm('Xóa đơn hàng?')) {
-      await orderService.remove(id);
-      await load();
-      alert('Đã xóa');
+      try {
+        await orderService.remove(id);
+        await load();
+        alert('Đã xóa');
+      } catch (e) {
+        console.error('Delete order error:', e); // Debug
+        alert('Lỗi khi xóa đơn hàng');
+      }
     }
   };
 
   const pay = async (orderId: number) => {
-    const p: PaymentDTO = { method: 'CASH', orderId: orderId };
-    await paymentService.create(p);
-    await load();
-    alert('Đã tạo thanh toán');
+    try {
+      const p: PaymentDTO = { method: 'CASH', orderId: orderId };
+      await paymentService.create(p);
+      await load();
+      alert('Đã tạo thanh toán');
+    } catch (e) {
+      console.error('Payment error:', e); // Debug
+      alert('Lỗi khi tạo thanh toán');
+    }
   };
 
   return (

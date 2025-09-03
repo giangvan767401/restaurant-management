@@ -5,26 +5,35 @@ export function saveAuth(token: string, role: Role, username: string) {
     localStorage.setItem('token', token);
     localStorage.setItem('role', role);
     localStorage.setItem('username', username);
+    console.log('Auth saved:', { token, role, username }); // Debug
   }
 }
 
 export function getToken(): string | null {
   if (typeof window === 'undefined') return null;
-  return localStorage.getItem('token');
+  const token = localStorage.getItem('token');
+  console.log('getToken:', token); // Debug
+  return token;
 }
 
 export function getRole(): Role {
   if (typeof window === 'undefined') return '';
-  return (localStorage.getItem('role') as Role) || '';
+  const role = (localStorage.getItem('role') as Role) || '';
+  console.log('getRole:', role); // Debug
+  return role;
 }
 
 export function getUsername(): string {
   if (typeof window === 'undefined') return '';
-  return localStorage.getItem('username') || '';
+  const username = localStorage.getItem('username') || '';
+  console.log('getUsername:', username); // Debug
+  return username;
 }
 
 export function isLoggedIn(): boolean {
-  return !!getToken();
+  const loggedIn = !!getToken();
+  console.log('isLoggedIn:', loggedIn); // Debug
+  return loggedIn;
 }
 
 export function logout() {
@@ -32,6 +41,7 @@ export function logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
     localStorage.removeItem('username');
+    console.log('Logged out'); // Debug
     window.location.href = '/login';
   }
 }

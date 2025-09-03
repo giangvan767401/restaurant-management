@@ -29,13 +29,11 @@ public class SecurityConfig {
         this.userRepository = userRepository;
     }
 
-    // 1. Mã hóa mật khẩu
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // 2. UserDetailsService lấy user từ DB
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> {
@@ -44,12 +42,11 @@ public class SecurityConfig {
 
             UserBuilder builder = org.springframework.security.core.userdetails.User.withUsername(user.getUsername());
             builder.password(user.getPassword());
-            builder.roles(user.getRole()); // role DB: DAUBEP, PHUCVU, QUANLI
+            builder.roles(user.getRole());
             return builder.build();
         };
     }
 
-    // 3. AuthenticationManager để login
     @Bean
     public AuthenticationManager authManager(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder authBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
@@ -58,30 +55,27 @@ public class SecurityConfig {
         return authBuilder.build();
     }
 
-    // 4. Cấu hình SecurityFilterChain + CORS
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors(Customizer.withDefaults())   // bật CORS
+                .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/foods/**", "/customers/**", "/orders/**", "/payments/**").permitAll()
+                        .requestMatchers("/auth/**", "/foods/**", "/customers/**", "/orders/**", "/order-items/**", "/payments/**").permitAll()
                         .requestMatchers("/dau-bep/**").hasRole("DAUBEP")
                         .requestMatchers("/phuc-vu/**").hasRole("PHUCVU")
                         .requestMatchers("/quan-li/**").hasRole("QUANLI")
                         .anyRequest().authenticated()
-                )
-                .httpBasic(Customizer.withDefaults());
+                );
 
         return http.build();
     }
 
-    // 5. Cấu hình CORS cho frontend
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000")); // frontend
-        configuration.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
+        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
 
