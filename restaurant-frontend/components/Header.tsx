@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { getRole, getUsername, isLoggedIn, logout } from '../utils/auth';
+import styles from './Header.module.css';
 
 export default function Header() {
   const [mounted, setMounted] = useState(false);
@@ -17,21 +18,21 @@ export default function Header() {
   }, []);
 
   if (!mounted) {
-    // tránh mismatch, render skeleton hoặc gì đó nhẹ
+    // tránh mismatch: render skeleton hoặc header đơn giản
     return (
-      <header className="w-full border-b bg-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between p-4">
-          <Link href="/" className="text-xl font-bold">🍽 Restaurant App</Link>
+      <header className={styles.header}>
+        <div className={styles.container}>
+          <Link href="/" className={styles.logo}>🍽 Restaurant App</Link>
         </div>
       </header>
     );
   }
 
   return (
-    <header className="w-full border-b bg-white">
-      <div className="mx-auto flex max-w-6xl items-center justify-between p-4">
-        <Link href="/" className="text-xl font-bold">🍽 Restaurant App</Link>
-        <nav className="flex items-center gap-4 text-sm">
+    <header className={styles.header}>
+      <div className={styles.container}>
+        <Link href="/" className={styles.logo}>🍽 Restaurant App</Link>
+        <nav className={styles.nav}>
           <Link href="/">Home</Link>
           <Link href="/products">Menu</Link>
           {['PHUCVU','DAUBEP','QUANLI'].includes(role) && <Link href="/orders">Orders</Link>}
@@ -39,21 +40,18 @@ export default function Header() {
           {['QUANLI'].includes(role) && <Link href="/customers">Customers</Link>}
           {['QUANLI'].includes(role) && <Link href="/dashboard">Dashboard</Link>}
           {logged ? (
-            <div className="flex items-center gap-3">
-              <span className="hidden sm:block text-gray-600">
+            <div className={styles.userBox}>
+              <span className={styles.userInfo}>
                 Hi, {username} ({role || 'GUEST'})
               </span>
-              <button
-                className="rounded-md bg-gray-900 px-3 py-1.5 text-white"
-                onClick={logout}
-              >
+              <button className={styles.logoutBtn} onClick={logout}>
                 Logout
               </button>
             </div>
           ) : (
-            <div className="flex items-center gap-2">
-              <Link href="/login" className="rounded-md border px-3 py-1.5">Login</Link>
-              <Link href="/register" className="rounded-md bg-gray-900 px-3 py-1.5 text-white">Register</Link>
+            <div className={styles.authBox}>
+              <Link href="/login" className={styles.loginBtn}>Login</Link>
+              <Link href="/register" className={styles.registerBtn}>Register</Link>
             </div>
           )}
         </nav>

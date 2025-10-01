@@ -1,0 +1,61 @@
+.container {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.select,
+.input {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 8px;
+  width: 100%;
+}
+
+.itemRow {
+  display: grid;
+  grid-template-columns: 1fr 120px 80px;
+  gap: 8px;
+  margin-bottom: 8px;
+  align-items: center;
+}
+
+.button {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.buttonAdd {
+  background: #f3f4f6;
+  border-radius: 6px;
+  padding: 6px 12px;
+  margin-top: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.buttonPrimary {
+  background: #111827;
+  color: #fff;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.buttonCancel {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 14px;
+  cursor: pointer;
+}

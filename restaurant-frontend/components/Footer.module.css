@@ -1,0 +1,9 @@
+.footer {
+  margin-top: 2.5rem;       /* mt-10 */
+  border-top: 1px solid #e5e7eb; /* border-t */
+  background-color: #f9fafb; /* bg-gray-50 */
+  padding: 1.5rem 0;        /* py-6 */
+  text-align: center;
+  font-size: 0.875rem;      /* text-sm */
+  color: #6b7280;           /* text-gray-500 */
+}

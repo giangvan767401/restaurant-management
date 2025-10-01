@@ -8,6 +8,9 @@ import { orderService } from '../services/orderService';
 import { paymentService } from '../services/paymentService';
 import { getRole } from '../utils/auth';
 
+// 👉 Import CSS Modules
+import styles from './Dashboard.module.css';
+
 export default function Dashboard() {
   const role = typeof window !== 'undefined' ? getRole() : '';
   const canView = ['QUANLI'].includes(role);
@@ -17,29 +20,29 @@ export default function Dashboard() {
   const [revenue, setRevenue] = useState(0);
 
   useEffect(() => {
-    console.log('Role:', role, 'Can view:', canView); // Debug
     if (!canView) return;
     setLoading(true);
     Promise.all([
-      customerService.list().catch(e => { console.error('Customers error:', e); return []; }),
-      orderService.list().catch(e => { console.error('Orders error:', e); return []; }),
-      paymentService.list().catch(e => { console.error('Payments error:', e); return []; }),
+      customerService.list().catch(() => []),
+      orderService.list().catch(() => []),
+      paymentService.list().catch(() => []),
     ])
       .then(([customers, orders, payments]) => {
         setTotalCustomers(customers.length);
         setTotalOrders(orders.length);
         setRevenue(payments.reduce((s, p) => s + (p.amount || 0), 0));
       })
-      .catch(e => console.error('Dashboard fetch error:', e))
       .finally(() => setLoading(false));
   }, [canView]);
 
   if (!canView) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className={styles.pageWrapper}>
         <Header />
-        <main className="mx-auto max-w-6xl p-6">
-          <div className="rounded-2xl border bg-white p-6 shadow-sm">Bạn không có quyền xem Dashboard.</div>
+        <main className="mx-auto max-w-6xl">
+          <div className={`${styles.card} text-center text-gray-700`}>
+            Bạn không có quyền xem Dashboard.
+          </div>
         </main>
         <Footer />
       </div>
@@ -47,23 +50,25 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className={styles.pageWrapper}>
       <Header />
-      <main className="mx-auto max-w-6xl p-6">
-        <h1 className="mb-4 text-xl font-semibold">Tổng quan</h1>
+      <main className="mx-auto max-w-6xl">
+        <h1 className={styles.pageTitle}>Tổng quan</h1>
         {loading ? <Spinner /> : (
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div className="rounded-2xl border bg-white p-6 shadow-sm">
-              <div className="text-sm text-gray-500">Khách hàng</div>
-              <div className="mt-2 text-3xl font-bold">{totalCustomers}</div>
+          <div className={styles.grid}>
+            <div className={`${styles.card} ${styles.statCard}`}>
+              <div className={styles.statLabel}>Khách hàng</div>
+              <div className={styles.statValue}>{totalCustomers}</div>
             </div>
-            <div className="rounded-2xl border bg-white p-6 shadow-sm">
-              <div className="text-sm text-gray-500">Đơn hàng</div>
-              <div className="mt-2 text-3xl font-bold">{totalOrders}</div>
+            <div className={`${styles.card} ${styles.statCard}`}>
+              <div className={styles.statLabel}>Đơn hàng</div>
+              <div className={styles.statValue}>{totalOrders}</div>
             </div>
-            <div className="rounded-2xl border bg-white p-6 shadow-sm">
-              <div className="text-sm text-gray-500">Doanh thu</div>
-              <div className="mt-2 text-3xl font-bold">{revenue.toLocaleString()}₫</div>
+            <div className={`${styles.card} ${styles.statCard}`}>
+              <div className={styles.statLabel}>Doanh thu</div>
+              <div className={styles.statValue}>
+                {revenue.toLocaleString()}₫
+              </div>
             </div>
           </div>
         )}

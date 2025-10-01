@@ -1,7 +1,10 @@
+import styles from './Footer.module.css';
+
 export default function Footer() {
+  const year = new Date().getFullYear();
   return (
-    <footer className="mt-10 border-t bg-gray-50 py-6 text-center text-sm text-gray-500">
-      © {new Date().getFullYear()} Restaurant App
+    <footer className={styles.footer}>
+      © {year} Restaurant App
     </footer>
   );
 }

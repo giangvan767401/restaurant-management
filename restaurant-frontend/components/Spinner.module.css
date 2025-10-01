@@ -1,0 +1,21 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px; /* tương đương p-6 */
+}
+
+.spinner {
+  width: 32px;   /* h-8 */
+  height: 32px;  /* w-8 */
+  border-radius: 50%;
+  border: 4px solid #d1d5db; /* border-gray-300 */
+  border-top-color: transparent;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

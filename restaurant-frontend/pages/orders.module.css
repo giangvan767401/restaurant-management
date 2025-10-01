@@ -1,0 +1,83 @@
+/* Layout chính */
+.container {
+  min-height: 100vh;
+  background-color: #f9fafb; /* tương đương bg-gray-50 */
+}
+
+/* Box table */
+.tableWrapper {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb; /* border-gray-200 */
+  background: white;
+}
+
+/* Table */
+.table {
+  width: 100%;
+  font-size: 0.875rem; /* text-sm */
+}
+
+.table thead {
+  background: #f9fafb; /* bg-gray-50 */
+}
+
+.table th,
+.table td {
+  padding: 12px;
+  text-align: left;
+}
+
+.table tbody tr {
+  border-top: 1px solid #e5e7eb;
+}
+
+/* Nút chung */
+.button {
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.buttonGreen {
+  background: #16a34a; /* bg-green-600 */
+  color: white;
+}
+
+.buttonGreen:hover {
+  background: #15803d; /* bg-green-700 */
+}
+
+.buttonDisabled {
+  background: #9ca3af; /* bg-gray-400 */
+  color: white;
+  cursor: not-allowed;
+}
+
+.buttonRed {
+  background: #dc2626; /* bg-red-600 */
+  color: white;
+}
+
+.buttonRed:hover {
+  background: #b91c1c; /* bg-red-700 */
+}
+
+/* Header + action bar */
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.createButton {
+  background: #111827; /* bg-gray-900 */
+  color: white;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-weight: 500;
+}

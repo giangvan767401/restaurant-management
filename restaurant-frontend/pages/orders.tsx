@@ -18,42 +18,53 @@ export default function Orders() {
   const [creating, setCreating] = useState(false);
   const [itemsCache, setItemsCache] = useState<{ [key: number]: OrderItemDTO }>({});
 
-  const canCreate = ['PHUCVU', 'QUANLI'].includes(role);
-  const canDelete = ['QUANLI'].includes(role);
+  const permissions = {
+    canCreate: ['PHUCVU', 'QUANLI'],
+    canDelete: ['QUANLI'],
+  };
+
+  const canCreate = permissions.canCreate.includes(role);
+  const canDelete = permissions.canDelete.includes(role);
 
   const load = async () => {
     setLoading(true);
     try {
-      const orders = await orderService.list();
-      console.log('Orders data:', orders); // Debug
-      setOrders(orders);
-      for (const order of orders) {
-        if (order.itemIds) {
-          for (const itemId of order.itemIds) {
-            if (!itemsCache[itemId]) {
-              try {
-                console.log(`Fetching item ${itemId}`); // Debug
-                const item = await orderService.getItem(itemId);
-                setItemsCache(prev => ({ ...prev, [itemId]: item }));
-              } catch (e) {
-                console.error(`Error loading item ${itemId}:`, e); // Debug
-              }
-            }
-          }
+      const fetchedOrders = await orderService.list();
+      setOrders(fetchedOrders);
+
+      // Lấy tất cả itemIds cần fetch
+      const itemsToFetch = fetchedOrders
+        .flatMap((o) => o.itemIds || [])
+        .filter((id) => !itemsCache[id]);
+
+      if (itemsToFetch.length > 0) {
+        try {
+          const fetchedItems = await Promise.all(
+            itemsToFetch.map((id) => orderService.getItem(id))
+          );
+
+          setItemsCache((prev) => {
+            const updated = { ...prev };
+            fetchedItems.forEach((item, idx) => {
+              updated[itemsToFetch[idx]] = item;
+            });
+            return updated;
+          });
+        } catch (e) {
+          console.error('Error loading items:', e);
         }
       }
-      console.log('Items cache:', itemsCache); // Debug
     } catch (e) {
-      console.error('Load orders error:', e); // Debug
+      console.error('Load orders error:', e);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    console.log('Role:', role, 'Username:', username); // Debug
+    console.log('Role:', role, 'Username:', username);
     load();
-  }, []);
+  }, [role, username]);
 
   const visibleOrders = useMemo(
     () =>
@@ -63,14 +74,14 @@ export default function Orders() {
     [orders, role, username]
   );
 
-  const createOrder = async (payload: Omit<OrderDTO, 'id' | 'itemIds'>) => {
+  const createOrder = async (payload: Omit<OrderDTO, 'id'>) => {
     try {
       await orderService.create(payload);
       setCreating(false);
       await load();
       alert('Tạo đơn thành công');
     } catch (e) {
-      console.error('Create order error:', e); // Debug
+      console.error('Create order error:', e);
       alert('Lỗi khi tạo đơn hàng');
     }
   };
@@ -82,7 +93,7 @@ export default function Orders() {
         await load();
         alert('Đã xóa');
       } catch (e) {
-        console.error('Delete order error:', e); // Debug
+        console.error('Delete order error:', e);
         alert('Lỗi khi xóa đơn hàng');
       }
     }
@@ -90,15 +101,17 @@ export default function Orders() {
 
   const pay = async (orderId: number) => {
     try {
-      const p: PaymentDTO = { method: 'CASH', orderId: orderId };
+      const p: PaymentDTO = { method: 'CASH', orderId };
       await paymentService.create(p);
       await load();
       alert('Đã tạo thanh toán');
     } catch (e) {
-      console.error('Payment error:', e); // Debug
+      console.error('Payment error:', e);
       alert('Lỗi khi tạo thanh toán');
     }
   };
+
+  if (loading) return <Spinner />;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -125,67 +138,69 @@ export default function Orders() {
           </div>
         )}
 
-        {loading ? (
-          <Spinner />
-        ) : (
-          <div className="overflow-x-auto rounded-xl border bg-white">
-            <table className="min-w-full text-sm">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="p-3 text-left">ID</th>
-                  <th className="p-3 text-left">Khách hàng</th>
-                  <th className="p-3 text-left">Thời gian</th>
-                  <th className="p-3 text-left">Trạng thái</th>
-                  <th className="p-3 text-left">Tổng tiền</th>
-                  <th className="p-3 text-left">Items</th>
-                  <th className="p-3 text-right">Hành động</th>
-                </tr>
-              </thead>
-              <tbody>
-                {visibleOrders.map((o: OrderDTO) => (
-                  <tr key={o.id} className="border-t align-top">
-                    <td className="p-3">{o.id}</td>
-                    <td className="p-3">{o.customerName || o.customerId}</td>
-                    <td className="p-3">
-                      {o.orderTime
-                        ? new Date(o.orderTime).toLocaleString()
-                        : 'N/A'}
-                    </td>
-                    <td className="p-3">{o.status}</td>
-                    <td className="p-3">{o.totalAmount || 0}</td>
-                    <td className="p-3">
-                      <ul className="list-disc pl-4">
-                        {o.itemIds?.map((id) => (
+        <div className="overflow-x-auto rounded-xl border bg-white">
+          <table className="min-w-full text-sm">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="p-3 text-left">ID</th>
+                <th className="p-3 text-left">Khách hàng</th>
+                <th className="p-3 text-left">Thời gian</th>
+                <th className="p-3 text-left">Trạng thái</th>
+                <th className="p-3 text-left">Tổng tiền</th>
+                <th className="p-3 text-left">Items</th>
+                <th className="p-3 text-right">Hành động</th>
+              </tr>
+            </thead>
+            <tbody>
+              {visibleOrders.map((o) => (
+                <tr key={o.id} className="border-t align-top">
+                  <td className="p-3">{o.id}</td>
+                  <td className="p-3">{o.customerName || o.customerId}</td>
+                  <td className="p-3">
+                    {o.orderTime
+                      ? new Date(o.orderTime).toLocaleString()
+                      : 'N/A'}
+                  </td>
+                  <td className="p-3">{o.status}</td>
+                  <td className="p-3">{o.totalAmount || 0}</td>
+                  <td className="p-3">
+                    <ul className="list-disc pl-4">
+                      {o.itemIds?.map((id) => {
+                        const item = itemsCache[id];
+                        return (
                           <li key={id}>
-                            {itemsCache[id]?.foodName
-                              ? `${itemsCache[id].foodName} x ${itemsCache[id].quantity}`
-                              : 'Loading...'}
+                            {item ? `${item.foodName || 'Món'} x ${item.quantity}` : 'Loading...'}
                           </li>
-                        ))}
-                      </ul>
-                    </td>
-                    <td className="p-3 text-right space-x-2">
+                        );
+                      })}
+                    </ul>
+                  </td>
+                  <td className="p-3 text-right space-x-2">
+                    <button
+                      onClick={() => pay(o.id!)}
+                      disabled={o.status === 'PAID'}
+                      className={`rounded px-2 py-1 text-white ${
+                        o.status === 'PAID'
+                          ? 'bg-gray-400 cursor-not-allowed'
+                          : 'bg-green-600'
+                      }`}
+                    >
+                      Thanh toán
+                    </button>
+                    {canDelete && (
                       <button
-                        onClick={() => pay(o.id!)}
-                        className="rounded bg-green-600 px-2 py-1 text-white"
+                        onClick={() => deleteOrder(o.id!)}
+                        className="rounded bg-red-600 px-2 py-1 text-white"
                       >
-                        Thanh toán
+                        Xóa
                       </button>
-                      {canDelete && (
-                        <button
-                          onClick={() => deleteOrder(o.id!)}
-                          className="rounded bg-red-600 px-2 py-1 text-white"
-                        >
-                          Xóa
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </main>
       <Footer />
     </div>

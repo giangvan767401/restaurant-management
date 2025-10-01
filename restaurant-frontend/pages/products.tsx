@@ -8,6 +8,7 @@ import ProductForm from '../components/ProductForm';
 import { foodService } from '../services/foodService';
 import type { ProductDTO } from '../types/product';
 import { getRole } from '../utils/auth';
+import styles from './Products.module.css';  // 👈 import css riêng
 
 export default function Products() {
   const [foods, setFoods] = useState<ProductDTO[]>([]);
@@ -22,7 +23,7 @@ export default function Products() {
       const data = await foodService.list();
       setFoods(data);
     } catch (e) {
-      // ignore for now
+      console.error('Load foods error:', e);
     } finally {
       setLoading(false);
     }
@@ -33,7 +34,9 @@ export default function Products() {
   const onSave = async (f: ProductDTO) => {
     if (f.id) await foodService.update(f.id, f);
     else await foodService.create(f);
-    setEditing(undefined); await load(); alert('Lưu món ăn thành công');
+    setEditing(undefined);
+    await load();
+    alert('Lưu món ăn thành công');
   };
 
   const onDelete = async (id: number) => {
@@ -45,17 +48,43 @@ export default function Products() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className={styles.pageWrapper}>
       <Header />
-      <main className="mx-auto max-w-6xl p-6">
-        <div className="mb-4 flex items-center justify-between">
-          <h1 className="text-xl font-semibold">Menu</h1>
-          {canManage && <button onClick={() => setEditing({} as ProductDTO)} className="rounded-md bg-gray-900 px-3 py-1.5 text-white">+ Thêm món</button>}
+      <main className={styles.content}>
+        <div className={styles.topBar}>
+          <h1 className={styles.pageTitle}>Menu</h1>
+          {canManage && (
+            <button
+              onClick={() => setEditing({} as ProductDTO)}
+              className={styles.btnPrimary}
+            >
+              + Thêm món
+            </button>
+          )}
         </div>
-        {editing && <div className="mb-6"><ProductForm initial={editing} onSubmit={onSave} onCancel={() => setEditing(undefined)} /></div>}
-        {loading ? <Spinner /> : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {foods.map(f => <ProductCard key={f.id} food={f} onEdit={canManage ? () => setEditing(f) : undefined} onDelete={canManage ? () => onDelete(f.id!) : undefined} />)}
+
+        {editing && (
+          <div className={styles.formWrapper}>
+            <ProductForm
+              initial={editing}
+              onSubmit={onSave}
+              onCancel={() => setEditing(undefined)}
+            />
+          </div>
+        )}
+
+        {loading ? (
+          <Spinner />
+        ) : (
+          <div className={styles.grid}>
+            {foods.map(f => (
+              <ProductCard
+                key={f.id}
+                food={f}
+                onEdit={canManage ? () => setEditing(f) : undefined}
+                onDelete={canManage ? () => onDelete(f.id!) : undefined}
+              />
+            ))}
           </div>
         )}
       </main>

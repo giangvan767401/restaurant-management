@@ -1,0 +1,107 @@
+/* Customers.module.css */
+
+/* Toàn trang */
+.pageWrapper {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f9fafb, #f3f4f6);
+  padding: 2rem;
+  font-family: 'Inter', sans-serif;
+  color: #1f2937;
+}
+
+/* Tiêu đề */
+.pageTitle {
+  font-size: 1.75rem;
+  font-weight: 700;
+  background: linear-gradient(to right, #2563eb, #9333ea);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.5px;
+}
+
+/* Thẻ card */
+.card {
+  background: #ffffff;
+  border-radius: 1rem;
+  border: 1px solid #e5e7eb;
+  padding: 1.5rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* Nút chính */
+.btnPrimary {
+  background: linear-gradient(to right, #2563eb, #9333ea);
+  color: #fff;
+  padding: 0.6rem 1.2rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.btnPrimary:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* Nút phụ */
+.btnSecondary {
+  background: #f9fafb;
+  border: 1px solid #d1d5db;
+  padding: 0.6rem 1.2rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+.btnSecondary:hover {
+  background: #f3f4f6;
+  transform: translateY(-1px);
+}
+
+/* Nút nguy hiểm */
+.btnDanger {
+  background: #ef4444;
+  color: #fff;
+  padding: 0.6rem 1.2rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+.btnDanger:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+}
+
+/* Bảng danh sách */
+.customersTable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 0.5rem;
+  font-size: 0.95rem;
+}
+
+.customersTable th {
+  text-align: left;
+  padding: 0.75rem;
+  font-weight: 600;
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.customersTable td {
+  padding: 0.75rem;
+  background: #ffffff;
+  border-top: 1px solid #f3f4f6;
+  transition: background 0.2s;
+}
+
+.customersTable tr:hover td {
+  background: #f9fafb;
+}

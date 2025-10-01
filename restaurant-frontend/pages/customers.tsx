@@ -9,6 +9,9 @@ import type { CustomerDTO } from '../types/customer';
 import { useRouter } from 'next/navigation';
 import { getRole } from '../utils/auth';
 
+// 👉 Import CSS Modules
+import styles from './Customers.module.css';
+
 export default function Customers() {
   const role = typeof window !== 'undefined' ? getRole() : '';
   const canManage = ['QUANLI'].includes(role);
@@ -18,11 +21,9 @@ export default function Customers() {
   const router = useRouter();
 
   const load = async () => {
-    console.log('Role:', role, 'Can manage:', canManage); // Debug
     setLoading(true);
     try {
       const data = await customerService.list();
-      console.log('Customers data:', data); // Debug
       setList(data);
     } catch (e) {
       console.error('Load customers error:', e);
@@ -31,7 +32,9 @@ export default function Customers() {
     }
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+  }, []);
 
   const onSave = async (c: CustomerDTO) => {
     if (c.id) await customerService.update(c.id, c);
@@ -51,10 +54,12 @@ export default function Customers() {
 
   if (!canManage) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className={styles.pageWrapper}>
         <Header />
-        <main className="mx-auto max-w-6xl p-6">
-          <div className="rounded-2xl border bg-white p-6 shadow-sm">Bạn không có quyền xem danh sách khách hàng.</div>
+        <main className="mx-auto max-w-6xl">
+          <div className={`${styles.card} text-center text-gray-700`}>
+            Bạn không có quyền xem danh sách khách hàng.
+          </div>
         </main>
         <Footer />
       </div>
@@ -62,40 +67,71 @@ export default function Customers() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className={styles.pageWrapper}>
       <Header />
-      <main className="mx-auto max-w-6xl p-6">
-        <div className="mb-4 flex items-center justify-between">
-          <h1 className="text-xl font-semibold">Khách hàng</h1>
-          {canManage && <button onClick={() => setEditing({} as CustomerDTO)} className="rounded-md bg-gray-900 px-3 py-1.5 text-white">+ Thêm</button>}
+      <main className="mx-auto max-w-6xl">
+        <div className="mb-6 flex items-center justify-between">
+          <h1 className={styles.pageTitle}>Danh sách khách hàng</h1>
+          {canManage && (
+            <button
+              onClick={() => setEditing({} as CustomerDTO)}
+              className={styles.btnPrimary}
+            >
+              + Thêm khách hàng
+            </button>
+          )}
         </div>
-        {editing && <div className="mb-6"><CustomerForm initial={editing} onSubmit={onSave} onCancel={() => setEditing(undefined)} /></div>}
-        {loading ? <Spinner /> : (
-          <div className="overflow-x-auto rounded-xl border bg-white">
-            <table className="min-w-full text-sm">
-              <thead className="bg-gray-50">
+
+        {editing && (
+          <div className={`${styles.card} mb-6`}>
+            <CustomerForm
+              initial={editing}
+              onSubmit={onSave}
+              onCancel={() => setEditing(undefined)}
+            />
+          </div>
+        )}
+
+        {loading ? (
+          <Spinner />
+        ) : (
+          <div className={styles.card}>
+            <table className={styles.customersTable}>
+              <thead>
                 <tr>
-                  <th className="p-3 text-left">ID</th>
-                  <th className="p-3 text-left">Tên</th>
-                  <th className="p-3 text-left">SĐT</th>
-                  <th className="p-3 text-left">Email</th>
-                  <th className="p-3 text-left">Cấp độ</th>
-                  <th className="p-3 text-right">Hành động</th>
+                  <th>ID</th>
+                  <th>Tên</th>
+                  <th>SĐT</th>
+                  <th>Email</th>
+                  <th>Cấp độ</th>
+                  <th className="text-right">Hành động</th>
                 </tr>
               </thead>
               <tbody>
                 {list.map(c => (
-                  <tr key={c.id} className="border-t">
-                    <td className="p-3">{c.id}</td>
-                    <td className="p-3">{c.name}</td>
-                    <td className="p-3">{c.phone}</td>
-                    <td className="p-3">{c.email}</td>
-                    <td className="p-3">{c.level}</td>
-                    <td className="p-3 text-right">
-                      {canManage && <>
-                        <button onClick={() => setEditing(c)} className="mr-2 rounded-md border px-3 py-1.5">Sửa</button>
-                        <button onClick={() => onDelete(c.id!)} className="rounded-md bg-red-600 px-3 py-1.5 text-white">Xóa</button>
-                      </>}
+                  <tr key={c.id}>
+                    <td>{c.id}</td>
+                    <td>{c.name}</td>
+                    <td>{c.phone}</td>
+                    <td>{c.email}</td>
+                    <td>{c.level}</td>
+                    <td className="text-right">
+                      {canManage && (
+                        <>
+                          <button
+                            onClick={() => setEditing(c)}
+                            className={`${styles.btnSecondary} mr-2`}
+                          >
+                            Sửa
+                          </button>
+                          <button
+                            onClick={() => onDelete(c.id!)}
+                            className={styles.btnDanger}
+                          >
+                            Xóa
+                          </button>
+                        </>
+                      )}
                     </td>
                   </tr>
                 ))}

@@ -6,6 +6,7 @@ import Spinner from '../components/Spinner';
 import { authService } from '../services/authService';
 import type { RegisterPayload } from '../types/auth';
 import { useRouter } from 'next/navigation';
+import styles from './Register.module.css';
 
 export default function Register() {
   const [form, setForm] = useState<RegisterPayload>({
@@ -34,13 +35,13 @@ export default function Register() {
     setLoading(true);
     try {
       await authService.register(form);
-      setMsg('Đăng ký thành công! Bây giờ bạn có thể đăng nhập.');
+      setMsg('✅ Đăng ký thành công! Bạn có thể đăng nhập.');
       router.push('/login');
     } catch (err: unknown) {
       if (err instanceof Error) {
         setMsg(err.message);
       } else {
-        setMsg('Đăng ký thất bại');
+        setMsg('❌ Đăng ký thất bại, vui lòng thử lại.');
       }
     } finally {
       setLoading(false);
@@ -48,55 +49,76 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className={styles.page}>
       <Header />
-      <main className="mx-auto max-w-md p-6">
-        <form
-          onSubmit={handleSubmit}
-          className="rounded-2xl border bg-white p-6 shadow-sm"
-        >
-          <h1 className="mb-4 text-xl font-semibold">Đăng ký</h1>
-          <input
-            name="username"
-            className="mb-3 w-full rounded-md border p-2"
-            placeholder="Username"
-            value={form.username}
-            onChange={handleChange}
-          />
-          <input
-            name="password"
-            type="password"
-            className="mb-3 w-full rounded-md border p-2"
-            placeholder="Password"
-            value={form.password}
-            onChange={handleChange}
-          />
-          <input
-            name="fullName"
-            className="mb-3 w-full rounded-md border p-2"
-            placeholder="Họ tên"
-            value={form.fullName}
-            onChange={handleChange}
-          />
-          <select
-            name="role"
-            className="mb-3 w-full rounded-md border p-2"
-            value={form.role}
-            onChange={handleChange}
-          >
-            <option value="CUSTOMER">CUSTOMER</option>
-            <option value="PHUCVU">PHUCVU</option>
-            <option value="DAUBEP">DAUBEP</option>
-            <option value="QUANLI">QUANLI</option>
-          </select>
+      <main className={styles.main}>
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <h1 className={styles.title}>Đăng ký tài khoản</h1>
+
+          <div className={styles.field}>
+            <label className={styles.label}>Username</label>
+            <input
+              name="username"
+              className={styles.input}
+              placeholder="Nhập username"
+              value={form.username}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className={styles.field}>
+            <label className={styles.label}>Password</label>
+            <input
+              name="password"
+              type="password"
+              className={styles.input}
+              placeholder="Nhập password"
+              value={form.password}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className={styles.field}>
+            <label className={styles.label}>Họ tên</label>
+            <input
+              name="fullName"
+              className={styles.input}
+              placeholder="Nhập họ tên"
+              value={form.fullName}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className={styles.field}>
+            <label className={styles.label}>Vai trò</label>
+            <select
+              name="role"
+              className={styles.input}
+              value={form.role}
+              onChange={handleChange}
+            >
+              <option value="CUSTOMER">Khách hàng</option>
+              <option value="PHUCVU">Phục vụ</option>
+              <option value="DAUBEP">Đầu bếp</option>
+              <option value="QUANLI">Quản lý</option>
+            </select>
+          </div>
+
           {msg && (
-            <div className="mb-3 rounded-md bg-gray-50 p-2 text-sm">{msg}</div>
+            <div
+              className={`${styles.message} ${
+                msg.startsWith('✅') ? styles.success : styles.error
+              }`}
+            >
+              {msg}
+            </div>
           )}
-          <button
-            className="w-full rounded-md bg-gray-900 px-4 py-2 text-white"
-            disabled={loading}
-          >
-            {loading ? <Spinner /> : 'Register'}
+
+          <button className={styles.button} disabled={loading}>
+            {loading ? <Spinner /> : 'Đăng ký'}
           </button>
         </form>
       </main>

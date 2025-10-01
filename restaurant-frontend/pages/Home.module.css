@@ -1,0 +1,57 @@
+.pageWrapper {
+  min-height: 100vh;
+  background-color: #f9fafb; /* bg-gray-50 */
+}
+
+.main {
+  max-width: 72rem; /* 6xl */
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.heroCard {
+  background: linear-gradient(135deg, #111827, #1f2937, #374151);
+  border-radius: 1.5rem; /* 3xl */
+  padding: 2.5rem;
+  color: white;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.heroCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 0.75rem;
+}
+
+.subtitle {
+  font-size: 1.125rem;
+  color: #d1d5db; /* gray-300 */
+  max-width: 36rem;
+  margin: 0 auto;
+}
+
+.ctaBtn {
+  display: inline-block;
+  margin-top: 1.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  background-color: #ffffff;
+  color: #111827;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: all 0.25s ease;
+}
+
+.ctaBtn:hover {
+  background-color: #f3f4f6;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px rgba(0,0,0,0.2);
+}
